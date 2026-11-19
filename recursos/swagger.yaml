@@ -1,0 +1,184 @@
+
+openapi: 3.1.0
+
+info:
+  title: API REST - Gestión de Empleados
+  description: Servicio para registrar, consultar, actualizar y eliminar empleados.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/api/v1
+
+tags:
+  - name: Empleados
+    description: Operaciones CRUD de empleados
+
+paths:
+
+  /empleados:
+
+    get:
+      tags:
+        - Empleados
+      summary: Listar todos los empleados
+      operationId: listarEmpleados
+      responses:
+        '200':
+          description: Lista de empleados obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Empleado'
+
+    post:
+      tags:
+        - Empleados
+      summary: Registrar un empleado
+      operationId: registrarEmpleado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpleadoRequest'
+      responses:
+        '201':
+          description: Empleado registrado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Empleado'
+        '400':
+          description: Datos de entrada inválidos
+
+  /empleados/{id}:
+
+    get:
+      tags:
+        - Empleados
+      summary: Buscar empleado por ID
+      operationId: buscarEmpleado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del empleado
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Empleado encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Empleado'
+        '404':
+          description: Empleado no encontrado
+
+    put:
+      tags:
+        - Empleados
+      summary: Actualizar un empleado
+      operationId: actualizarEmpleado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del empleado
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpleadoRequest'
+      responses:
+        '200':
+          description: Empleado actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Empleado'
+        '400':
+          description: Datos de entrada inválidos
+        '404':
+          description: Empleado no encontrado
+
+    delete:
+      tags:
+        - Empleados
+      summary: Eliminar un empleado
+      operationId: eliminarEmpleado
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del empleado
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '204':
+          description: Empleado eliminado correctamente
+        '404':
+          description: Empleado no encontrado
+
+components:
+
+  schemas:
+
+    Empleado:
+      type: object
+      required:
+        - id
+        - nombre
+        - apellido
+        - email
+      properties:
+        id:
+          type: integer
+          format: int32
+          example: 1
+        nombre:
+          type: string
+          example: Juan
+        apellido:
+          type: string
+          example: Perez
+        email:
+          type: string
+          format: email
+          example: juan.perez@gmail.com
+        especialidad:
+          type: string
+          nullable: true
+          example: Desarrollo Backend
+
+    EmpleadoRequest:
+      type: object
+      required:
+        - nombre
+        - apellido
+        - email
+      properties:
+        nombre:
+          type: string
+          minLength: 1
+          example: Juan
+        apellido:
+          type: string
+          minLength: 1
+          example: Perez
+        email:
+          type: string
+          format: email
+          example: juan.perez@gmail.com
+        especialidad:
+          type: string
+          nullable: true
+          example: Desarrollo Backend
